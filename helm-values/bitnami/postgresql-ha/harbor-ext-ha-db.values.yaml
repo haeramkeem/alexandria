@@ -700,7 +700,7 @@ pgpool:
   sidecars: []
   ## @param pgpool.replicaCount The number of replicas to deploy
   ##
-  replicaCount: 2
+  replicaCount: 2 ## MODIFIED from 1 ##
   ## @param pgpool.podAnnotations Additional pod annotations
   ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
   ##
