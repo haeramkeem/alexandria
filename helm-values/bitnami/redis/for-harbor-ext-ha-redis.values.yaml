@@ -18,7 +18,7 @@ global:
   imagePullSecrets: []
   storageClass: ""
   redis:
-    password: ""
+    password: "Harbor12345" ## MODIFIED from '' ##
 
 ## @section Common parameters
 ##
@@ -918,7 +918,7 @@ sentinel:
     debug: false
   ## @param sentinel.masterSet Master set name
   ##
-  masterSet: mymaster
+  masterSet: harbor-redis-master ## MODIFIED from 'mymaster' ##
   ## @param sentinel.quorum Sentinel Quorum
   ##
   quorum: 2
