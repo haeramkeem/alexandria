@@ -28,8 +28,8 @@ global:
   imagePullSecrets: []
   storageClass: ""
   postgresql:
-    username: "harbor" ## MODIFIED from '' ##
-    password: "Harbor12345" ## MODIFIED from '' ##
+    username: ""
+    password: ""
     database: ""
     repmgrUsername: ""
     repmgrPassword: ""
@@ -548,11 +548,11 @@ postgresql:
   ##      #!/bin/sh
   ##      echo "Do something."
   ##
-  initdbScripts: 
+  initdbScripts: ## MODIFIED from {} ##
     init_harbor_db.sql: |
-      CREATE DATABASE registry OWNER harbor;
-      CREATE DATABASE notary_server OWNER harbor;
-      CREATE DATABASE notary_signer OWNER harbor;
+      CREATE DATABASE registry OWNER postgres;
+      CREATE DATABASE notary_server OWNER postgres;
+      CREATE DATABASE notary_signer OWNER postgres;
   ## @param postgresql.initdbScriptsCM ConfigMap with scripts to be run at first boot
   ## NOTE: This will override initdbScripts
   ##
@@ -963,7 +963,10 @@ pgpool:
   ##      #!/bin/sh
   ##      echo "Do something."
   ##
-  initdbScripts: {}
+  initdbScripts: ## MODIFIED from {} ##
+    activate_failover.sh: |
+      #!/bin/bash
+      sed -i "s/failover_on_backend_error = 'off'/failover_on_backend_error = 'on'/g" /opt/bitnami/pgpool/conf/pgpool.conf
   ## @param pgpool.initdbScriptsCM ConfigMap with scripts to be run every time Pgpool container is initialized
   ## NOTE: This will override pgpool.initdbScripts
   ##
