@@ -1,0 +1,31 @@
+# Example manifest for Local type volume
+# @see https://kubernetes.io/docs/concepts/storage/volumes/#local
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  ## PV name
+  name: example-local-pv
+spec:
+  capacity:
+    ## PV size
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  ## PV SC name
+  storageClassName: local-mnt
+  local:
+    ## Mount path
+    path: /mnt/nfs_shared/example-local-pv
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          ## Node names
+          - k8s-m1
+          - k8s-w1
