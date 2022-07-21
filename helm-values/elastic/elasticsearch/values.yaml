@@ -15,12 +15,15 @@ roles:
   remote_cluster_client: "true"
   ml: "true"
 
-#########################################
-#  Customized #1                        #
-#  NUMBER OF REPLICAS AND MASTER NODES  #
-#########################################
+# -------------------------
+# Number of replicas and masters
+#   Configure them on your own to fit it to your k8s cluster
+#   The default values are modified as follow:
+#     replicas: 3 -> 2
+#     minimumMasterNodes: 2 -> 1
+# -------------------------
 replicas: 2
-minimumMasterNodes: 2
+minimumMasterNodes: 1
 
 esMajorVersion: ""
 
@@ -62,31 +65,16 @@ secretMounts: []
 #    path: /usr/share/elasticsearch/config/certs
 #    defaultMode: 0755
 
-#############################
-#  Customized #2            #
-#  LOCAL DNS CONFIGURATION  #
-#############################
-hostAliases:
-- ip: "192.168.1.101"
-  hostnames:
-  - "k8s-m1"
-- ip: "192.168.1.102"
-  hostnames:
-  - "k8s-m2"
-- ip: "192.168.1.103"
-  hostnames:
-  - "k8s-m3"
-- ip: "192.168.1.201"
-  hostnames:
-  - "k8s-w1"
-- ip: "192.168.1.202"
-  hostnames:
-  - "k8s-w2"
+hostAliases: []
 #- ip: "127.0.0.1"
 #  hostnames:
 #  - "foo.local"
 #  - "bar.local"
 
+# -------------------------
+# Image
+#   If you want to use another version, modify the image tag
+# -------------------------
 image: "docker.elastic.co/elasticsearch/elasticsearch"
 imageTag: "7.17.1"
 imagePullPolicy: "IfNotPresent"
@@ -100,38 +88,42 @@ labels: {}
 
 esJavaOpts: "" # example: "-Xmx1g -Xms1g"
 
-#####################
-#  Customized #3    #
-#  LIMIT RESOURCES  #
-#####################
+# -------------------------
+# Resource limits
+#   Modify the values to limit resource consumption
+#   As elasticsearch consumes a lot of memory and cpu
+# -------------------------
 resources:
   requests:
-    cpu: "50m"
-    memory: "512Mi"
+    cpu: "1000m"
+    memory: "2Gi"
   limits:
-    cpu: "100m"
-    memory: "1Gi"
+    cpu: "1000m"
+    memory: "2Gi"
 
-initResources:
-  requests:
-    cpu: "25m"
-    memory: "128Mi"
-  limits:
-    cpu: "25m"
-    memory: "128Mi"
+initResources: {}
+  # limits:
+  #   cpu: "25m"
+  #   memory: "128Mi"
+  # requests:
+  #   cpu: "25m"
+  #   memory: "128Mi"
 
 networkHost: "0.0.0.0"
 
-###################################
-#  Customized #4                  #
-#  STATEFULSET PVC CONFIGURATION  #
-###################################
+# -------------------------
+# PVC template
+#   Modify the values to provision PV statically or dynamically
+#   The default values are modified as follow:
+#     storageClassName: "local-mnt" <- storage class name specification is added
+#     storage: 30Gi -> 10Gi
+# -------------------------
 volumeClaimTemplate:
   accessModes: ["ReadWriteOnce"]
-  storageClassName: "nfs-client" # Use `nfs-subdir-external-provisioner` default setting
+  storageClassName: "local-mnt"
   resources:
     requests:
-      storage: 3Gi
+      storage: 10Gi
 
 rbac:
   create: false
@@ -263,9 +255,17 @@ readinessProbe:
   periodSeconds: 10
   successThreshold: 3
   timeoutSeconds: 5
-
-# https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cluster-health.html#request-params wait_for_status
-clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
+ 
+# -------------------------
+# Readiness probe
+#   Use alterative status
+#   When the number of replicas is same with the masters
+#   As for that circumstance, status will never go green
+#   because there are no available data nodes
+#   @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cluster-health.html#request-params wait_for_status
+#   @see https://github.com/elastic/helm-charts/issues/783#issuecomment-701037663
+# -------------------------
+clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
 
 ## Use an alternate scheduler.
 ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
