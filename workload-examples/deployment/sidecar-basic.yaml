@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidecar-example-dpy
+  labels:
+    app: sidecar-example-dpy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidecar-example-pod
+  template:
+    metadata:
+      labels:
+        app: sidecar-example-pod
+    spec:
+      containers:
+      # Sample image for saving current time to the `/var/log/time.log` file
+      # Source: https://github.com/haeramkeem/sh-it/tree/main/examples/py-timelog-docker
+      - name: main
+        image: docker.io/library/timelog:0.0.1
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+      # Sample sidecar container manifest for redirecting the `/var/log/time.log` file to the STDOUT
+      # Source: https://kubernetes.io/docs/concepts/cluster-administration/logging/#streaming-sidecar-container
+      - name: sidecar
+        image: docker.io/library/busybox:stable
+        args: [/bin/sh, -c, 'tail -n+1 -F /var/log/time.log']
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+      volumes:
+      - name: varlog
+        emptyDir: {}
