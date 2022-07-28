@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpine-dpy
+  labels:                                       ## Label for the deployment
+    app: alpine-dpy-label
+spec:
+  replicas: 3                                   ## Default: 1
+  selector:                                     ## Pod selector (must be matched w/ pod label)
+    matchLabels:
+      app: alpine-pod-label
+  template:                                     ## Pod template
+    metadata:
+      labels:                                   ## Label for the pod
+        app: alpine-pod-label
+    spec:
+      containers:
+      - image: docker.io/library/alpine:3.15
+        imagePullPolicy: IfNotPresent           ## Default: IfNotPresent (for non-latest img tag)
+        name: alpine-container
+        args:
+        - /bin/sh
+        - -c
+        - while true; do date; sleep $SLEEP_PERIOD; done
+        env:
+        - name: SLEEP_PERIOD
+          value: "1"                            ## Value must be string
