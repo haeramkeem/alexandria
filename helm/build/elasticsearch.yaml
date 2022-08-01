@@ -1,6 +1,7 @@
 ## ELASTICSEARCH 7.17.3 MANIFEST
 ##
 ##      Build source: helm.elastic.co/elasticsearch v7.17.3
+##      Modifying this manifest is not recommended; rebuild it instead (via Helm)
 ##
 ##      Modifications:
 ##          1. Remove `heritage: Helm` labels
@@ -8,7 +9,7 @@
 ##          3. Remove `release: $HELM_RELASE` labels
 ##          4. Remove Helm testing pod
 ##
-##      Used values.yaml
+##      Used values.yaml:
 ##          1. Modify `.replicas` to 2
 ##          2. Modify `.minimumMasterNodes` to 1
 ##          3. Fix image tag to `7.17.3`
