@@ -1,0 +1,35 @@
+## Example Kubeadm init config file
+## @see https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-config
+## @see https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta3
+
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+
+apiServer:
+  extraArgs:
+    ## Change kube-apiserver's flags to modify the default tolerations for the pods
+    ## @see https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver
+    ## @see https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/control-plane-flags/#apiserver-flags
+    default-not-ready-toleration-seconds: "30"            # + (Default: 300s)
+    default-unreachable-toleration-seconds: "30"          # + (Default: 300s)
+
+## Set control-plane endpoint for HA cluster
+controlPlaneEndpoint: "FE_ADDR:FE_PORT"                   # + (Matched w/ --control-plane-endpoint)
+
+controllerManager:
+  extraArgs:
+    ## Change kube-controller-manager's flags to modify the default node monitoring period
+    ## @see https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager
+    ## @see https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/control-plane-flags/#controllermanager-flags
+    node-monitor-period: "2s"                             # + (Default: 5s)
+    node-monitor-grace-period: "20s"                      # + (Default: 40s)
+
+networking:
+  ## Set pod network CIDR to fit in w/ Calico
+  podSubnet: "POD_NETWORK_CIDR"                           # + (Matched w/ --pod-network-cidr)
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+## Change kubelet's flag to modify the default node status update frequency
+## @see https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet
+nodeStatusUpdateFrequency: "4s"                           # + (Default: 10s)
