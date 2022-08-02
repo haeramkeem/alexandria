@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidecar-example-dpy
+  labels:
+    app: sidecar-example-dpy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sidecar-example-pod
+  template:
+    metadata:
+      labels:
+        app: sidecar-example-pod
+    spec:
+      containers:
+      # Sample image for saving current time to the `/var/log/time.log` file
+      # Source: https://github.com/haeramkeem/sh-it/tree/main/examples/py-timelog-docker
+      - name: timelog
+        image: docker.io/haeramkeem/py-timelog:0.0.2
+        env:
+        - name: LOG_FILE_PATH
+          value: /var/log/time.log
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+      # Sample sidecar container manifest for redirecting the `/var/log/time.log` file to the STDOUT
+      # Source: https://kubernetes.io/docs/concepts/cluster-administration/logging/#streaming-sidecar-container
+      - name: sidecar
+        image: docker.io/haeramkeem/fluentd-es:7.17-1.14
+        env:
+        - name: ES_HOST_URL
+          value: elasticsearch-master.default
+        - name: SRC_FILE_PATH
+          value: /var/log/time.log
+        - name: SRC_TAG
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+      volumes:
+      - name: varlog
+        emptyDir: {}
