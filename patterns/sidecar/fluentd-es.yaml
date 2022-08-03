@@ -21,7 +21,9 @@ spec:
         image: docker.io/haeramkeem/py-timelog:0.0.2
         env:
         - name: LOG_FILE_PATH
-          value: /var/log/time.log
+          value: "/var/log/time.log"
+        - name: LOG_INTERVAL
+          value: "5"
         volumeMounts:
         - name: varlog
           mountPath: /var/log
@@ -31,9 +33,9 @@ spec:
         image: docker.io/haeramkeem/fluentd-es:7.17-1.14
         env:
         - name: ES_HOST_URL
-          value: elasticsearch-master.default
+          value: "elasticsearch-master.default"
         - name: SRC_FILE_PATH
-          value: /var/log/time.log
+          value: "/var/log/time.log"
         - name: SRC_TAG
           valueFrom:
             fieldRef:
