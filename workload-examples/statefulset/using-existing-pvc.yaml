@@ -4,7 +4,6 @@ metadata:
   name: using-host-path-pvc-sfs
 spec:
   replicas: 3
-  serviceName: sts-svc-domain #statefulset need it
   selector:
     matchLabels:
       app: using-host-path-pvc-sfs
