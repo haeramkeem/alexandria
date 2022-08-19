@@ -1,0 +1,31 @@
+# Example source: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/
+---
+configMapGenerator:
+- name: example-configmap
+  files:                        # Make ConfigMap from regular file
+  - application.properties
+  envs:                         # Make ConfigMap from .env file
+  - .example.env
+  literals:                     # Make ConfigMap from key-value pair string literal
+  - FOO2=bar
+generatorOptions:
+  disableNameSuffixHash: true   # Do not add hash to the ConfigMap name (default: false)
+  annotations:                  # Specify the annotations to be added
+    note: generated
+  labels:                       # Specify the labels to be added
+    type: generated
+---
+# Kustomize result:
+# apiVersion: v1
+# data:
+#   FOO1: bar
+#   FOO2: bar
+#   application.properties: |
+#     FOO=bar
+# kind: ConfigMap
+# metadata:
+#   annotations:
+#     note: generated
+#   labels:
+#     type: generated
+#   name: example-configmap
