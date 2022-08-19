@@ -1,0 +1,14 @@
+# Source: https://eksctl.io/usage/creating-and-managing-clusters
+
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: eks-sandbox
+  region: ap-northeast-2
+nodeGroups:
+  - name: k8s-w1
+    instanceType: t2.micro
+    desiredCapacity: 2            # Donno wtf is this; default is 2
+    volumeSize: 20
+    ssh:
+      allow: true                 # will use ~/.ssh/id_rsa.pub as the default ssh key
