@@ -1,0 +1,33 @@
+name: upload-s3
+on:
+  push:
+    branches:
+      - release
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.0.1
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.1.1
+        with:
+          node-version: '16.x'
+      - name: Cache
+        uses: actions/cache@v3.0.2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Build
+        run: npm install && npm run export
+      - name: Upload
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 cp \
+            --recursive \
+            --region ap-northeast-2 \
+            out/ s3://${{ secrets.AWS_S3_BUCKET_NAME }}
