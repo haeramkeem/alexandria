@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: curlutils
+  namespace: default
+spec:
+  containers:
+  - name: curlutils
+    image: docker.io/curlimages/curl:7.86.0
+    command:
+      - sleep
+      - "infinity"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
