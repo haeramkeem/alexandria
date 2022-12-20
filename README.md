@@ -9,8 +9,8 @@
 5. Raw K8s manifests
 6. Kubeadm configs
 7. Kustomization files
-8. Terraform `.tf` files
-9. Vagrant configs
+8. Terraform IaC
+9. Vagrant IaC
 
 ## Migration history
 
