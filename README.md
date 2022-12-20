@@ -1,6 +1,6 @@
 # The Great Library of Alexandria for Cloud Native Documents
 
-## Scope of the repository (Updated Dec 20, 2022)
+## Scope of the repository (Updated Dec 21, 2022)
 
 1. Dockerfiles
 2. AWS-EKS configs
@@ -10,6 +10,7 @@
 6. Kubeadm configs
 7. Kustomization files
 8. Terraform `.tf` files
+9. Vagrant configs
 
 ## Migration history
 
