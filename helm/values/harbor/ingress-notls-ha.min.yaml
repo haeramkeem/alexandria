@@ -1,0 +1,74 @@
+expose:
+  type: ingress
+  tls:
+    enabled: false
+    certSource: none
+  ingress:
+    annotations:
+      ingress.kubernetes.io/ssl-redirect: "false"
+      ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+
+externalURL: http://core.harbor.domain
+
+persistence:
+  enabled: true
+  persistentVolumeClaim:
+    registry:
+      accessMode: ReadWriteMany
+    chartmuseum:
+      accessMode: ReadWriteMany
+    jobservice:
+      accessMode: ReadWriteMany
+    database:
+      accessMode: ReadWriteMany
+    redis:
+      accessMode: ReadWriteMany
+    trivy:
+      accessMode: ReadWriteMany
+
+nginx:
+  replicas: 2
+
+portal:
+  replicas: 2
+
+core:
+  replicas: 2
+
+jobservice:
+  replicas: 2
+
+registry:
+  replicas: 2
+
+chartmuseum:
+  replicas: 2
+
+trivy:
+  replicas: 2
+
+notary:
+  enabled: true
+  server:
+    replicas: 2
+  signer:
+    replicas: 2
+
+database:
+  type: external
+  external:
+    host: "pg-postgresql-ha-pgpool.harbor.svc.cluster.local"
+    username: "harbor"
+    password: "Harbor12345"
+
+redis:
+  type: external
+  external:
+    addr: "redis:26379"
+    sentinelMasterSet: "harbor-redis-master"
+    password: "Harbor12345"
+
+exporter:
+  replicas: 2
