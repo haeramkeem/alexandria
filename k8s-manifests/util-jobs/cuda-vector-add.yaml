@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cuda-vector-add
+spec:
+  template:
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: nvidia.com/gpu.count
+                  operator: Exists
+      containers:
+        - name: cuda-vector-add
+          # https://github.com/kubernetes/kubernetes/blob/v1.7.11/test/images/nvidia-cuda/Dockerfile
+          image: "k8s.gcr.io/cuda-vector-add:v0.1"
+          resources:
+            limits:
+              nvidia.com/gpu: 2
+      restartPolicy: Never
+  backoffLimit: 4
