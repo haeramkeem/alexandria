@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gpu-burn
+spec:
+  template:
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: nvidia.com/gpu.count
+                  operator: Exists
+      containers:
+        - name: gpu-burn
+          image: oguzpastirmaci/gpu-burn
+          resources:
+            limits:
+              nvidia.com/gpu: 2
+      restartPolicy: Never
+  backoffLimit: 4
