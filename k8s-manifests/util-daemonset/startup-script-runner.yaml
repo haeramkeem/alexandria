@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    name: startup-script-runner 
+  name: startup-script-runner
+spec:
+  selector:
+    matchLabels:
+      name: startup-script-runner
+  template:
+    metadata:
+      labels:
+        name: startup-script-runner
+    spec:
+      containers:
+        - name: startup-script-runner
+          image: gcr.io/google-containers/startup-script:v1
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+          env:
+            - name: STARTUP_SCRIPT
+              value: |
+                #!/bin/bash
+                echo $K8S_NODE_NAME
+                echo "done"
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+      tolerations:
+        - operator: Exists # (maybe) tolerate all taints
