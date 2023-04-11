@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu
+  labels:
+    os/distro: ubuntu
+    os/version: focal-20.04-LTS
+spec:
+  containers:
+  - name: ubuntu
+    image: docker.io/library/ubuntu:focal
+    command:
+      - sleep
+      - "infinity"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
